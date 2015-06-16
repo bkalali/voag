@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:https="http://www.mulesoft.org/schema/mule/https"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ws="http://www.mulesoft.org/schema/mule/ws"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json"
+	xmlns:ss="http://www.springframework.org/schema/security"
+	xmlns:mule-ss="http://www.mulesoft.org/schema/mule/spring-security"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:context="http://www.springframework.org/schema/context" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:core="http://www.mulesoft.org/schema/mule/core" version="EE-3.6.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/https http://www.mulesoft.org/schema/mule/https/current/mule-https.xsd
+http://www.mulesoft.org/schema/mule/ws http://www.mulesoft.org/schema/mule/ws/current/mule-ws.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/spring-security http://www.mulesoft.org/schema/mule/spring-security/current/mule-spring-security.xsd
+http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+  
+  <context:property-placeholder location="api.properties,db.properties"/>
+
+  <https:connector name="httpsConnector" doc:name="HTTP-HTTPS">
+      <service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
+     <https:tls-key-store path="keystore-voag.jks" keyPassword="${keyPassword}" storePassword="${storePassword}"/>
+     <https:tls-server path="keystore-voag.jks" storePassword="${storePassword}"/>
+ </https:connector>
+
+	<spring:beans>
+		<ss:authentication-manager alias="authManager">
+			<ss:authentication-provider>
+				<ss:user-service id="userService">
+					<ss:user name="voag" password="voag" authorities="ROLE_USER" />
+				</ss:user-service>
+			</ss:authentication-provider>
+		</ss:authentication-manager>
+	</spring:beans>
+	
+   <mule-ss:security-manager>
+		<mule-ss:delegate-security-provider
+			name="memory-provider" delegate-ref="authManager" />
+   </mule-ss:security-manager>
+	
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="false" doc:name="Router"/>
+ 
+    <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping" >  
+        <apikit:mapping statusCode="404"> 
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>  
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"></set-property>  
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" doc:name="Set Payload"></set-payload> 
+        </apikit:mapping>  
+        <apikit:mapping statusCode="405"> 
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>  
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"></set-property>  
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" doc:name="Set Payload"></set-payload> 
+        </apikit:mapping>  
+        <apikit:mapping statusCode="415"> 
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>  
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"></set-property>  
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" doc:name="Set Payload"></set-payload> 
+        </apikit:mapping>  
+        <apikit:mapping statusCode="406"> 
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>  
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"></set-property>  
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" doc:name="Set Payload"></set-payload> 
+        </apikit:mapping>  
+        <apikit:mapping statusCode="400"> 
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>  
+            <set-property propertyName="Content-Type" value="application/json" doc:name="Property"></set-property>  
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" doc:name="Set Payload"></set-payload> 
+        </apikit:mapping> 
+    </apikit:mapping-exception-strategy>
+
+    <flow name="main" >
+        <https:inbound-endpoint address="https://${host}:${https.port}/api" connector-ref="httpsConnector" doc:name="HTTP">
+           <mule-ss:http-security-filter realm="mule-realm" />
+        </https:inbound-endpoint>
+        <apikit:router config-ref="apiConfig" doc:name="APIkit Router"/>
+        <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
+    </flow>
+        <flow name="console" >
+        <https:inbound-endpoint address="https://${host}:${https.port}/console" connector-ref="httpsConnector" doc:name="HTTP">
+        <mule-ss:http-security-filter realm="mule-realm" />
+        </https:inbound-endpoint>
+        <apikit:console config-ref="apiConfig" doc:name="APIkit Console"/>
+    </flow>
+    
+     <flow name="post:/order:apiConfig" >
+		<flow-ref name="createAnOrderInDB-subflow" doc:name="createAnOrderInDB"/>
+		<set-property propertyName="Location"
+			value="https://${host}:${https.port}/api/order/#[payload.get(0).id]"
+			doc:name="LocationOfNewCreatedOrder" />
+		<logger message="The order location is : #[message.outboundProperties['Location']]"
+			level="INFO" doc:name="Logger" />
+    </flow>
+    
+    <flow name="get:/inventory:apiConfig" >
+    	<flow-ref name="getOrderInventoryFromDB-subflow" doc:name="getOrderInventoryFromDB"/>
+    </flow>
+    
+    <flow name="get:/order/{orderId}:apiConfig">
+        <logger message="GET order by orderId #[flowVars['orderId']] called" level="INFO"/>
+    	<flow-ref name="getOrderByOrderIdFromDB-subflow"/>
+    </flow>
+</mule>
