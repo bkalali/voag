@@ -10,14 +10,14 @@
 ## The RAML Rest APIs  
 There are three RAML Rest APIs:
 
-1. create an Order   
-   POST: https://localhost:8083/api/order  
-2. get an order
+1. Create an order   
+   POST: https://localhost:8083/api/order
+2. Get an order
    GET:https://localhost:8083/api/order/54
-3. list of order inventory
+3. Get a list of order inventory
    GET: https://localhost:8083/api/inventory
 
-For details of using these APIs, please see APIKit Consoles for details examples and schema.            
+For more information using these APIs, please see APIKit Consoles with details examples and schema.            
 
 </content>
 <tabTrigger>readme</tabTrigger>
