@@ -5,7 +5,7 @@ This project is created to demonstrate some of the MuleSoft functionality and ca
 
 1. src/main/app/voag-front-end.xml contains front end flows which are designed to expose RAML rest APIs.
 2. src/main/app/voag-back-end.xml contains back end flows which are designed to access back-end database using database connector.
-3. The rest endpoints are secured by SSL and mule in memory authentication-manager  
+3. The rest endpoints are secured by SSL and in memory authentication-manager  
    
  
 ## Prerequisite
