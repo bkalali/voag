@@ -2,9 +2,10 @@
 <content>
 ## VOAG Demo project
 In order to demonstrate some of the MuleSoft functionality and capabilities,for this project three use cases are developed: create an order, retrieve an inventory of orders and retrieve an order by order id.  
-2. src/main/app/voag-front-end.xml contains front end flows which are designed to expose RAML rest APIs.
-3. src/main/app/voag-back-end.xml contains back end flows which are designed to access back-end database using database connector.
-4. The rest endpoints are secured by SSL and in memory authentication-manager  
+
+1. src/main/app/voag-front-end.xml contains front end flows which are designed to expose RAML rest APIs.
+2. src/main/app/voag-back-end.xml contains back end flows which are designed to access back-end database using database connector.
+3. The rest endpoints are secured by SSL and in memory authentication-manager  
    
  
 ## Prerequisite
