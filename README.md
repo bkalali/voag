@@ -11,8 +11,8 @@ This project is created to demonstrate some of the MuleSoft functionality and ca
 ## Prerequisite
 1. It is assumed that you have installed MySql database.
 2. You have maven apache-maven-3.1.1 or higher installed.
-3. You have updated your database configuration parameters in src/main/resources/db.properties
-4. You have used DDL from src/test/resources/order.sql to create an order table. 
+3. You have used DDL from src/test/resources/order.sql to create an order table. 
+4. You have updated your database configuration parameters in src/main/resources/db.properties
 5. Postman is used for testing these APIs using 
    userid=voag,
    password=voag
