@@ -5,6 +5,9 @@
 ## Prerequisite
 1. This project assumes that you have installed MySql database
 2. You have create a table with DDL from src/test/resources
+3. Postman can be used for testing these APIs using 
+   userid=voag
+   password=voag
   
 
 ## The RAML Rest APIs  
