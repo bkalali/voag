@@ -2,13 +2,13 @@
 <content>
 ## VOAG Demo project
 This project is created to demonstrate some of the MuleSoft functionality and capabilities as follows.
-+1. voag-front-end.xml contains front end flows which used to expose RAML rest services.
-+2. voag-back-end.xml contains back end flows which used to access back-end database.
-+3. The rest endpoints are secured by SSL and mule's in memory's authentication-manager   
+1. src/main/app/voag-front-end.xml contains front end flows which used to expose RAML rest services.
+2. src/main/app/voag-back-end.xml contains back end flows which used to access back-end database.
+3. The rest endpoints are secured by SSL and mule's in memory's authentication-manager   
    
  
 ## Prerequisite
-1. This project assumes that you have installed MySql database.
+1. It is assumed that you have installed MySql database.
 2. You have used DDL from src/test/resources/order.sql to create an order table. 
 3. Postman is used for testing these APIs using 
    userid=voag,
