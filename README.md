@@ -35,7 +35,7 @@ There are three RAML Rest APIs:
 3. Get a list of order inventory
    GET: https://localhost:8083/api/inventory
 
-For more information using these APIs, please see APIKit Consoles with details examples and schema.            
+For more information using these APIs, please see APIKit Console (https://localhost:8083/console/) with details examples and schema.            
 
 </content>
 <tabTrigger>readme</tabTrigger>
